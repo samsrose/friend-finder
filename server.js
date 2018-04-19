@@ -1,58 +1,49 @@
 // Pull in required dependencies
-var express = require("express");
-var path = require("path");
-var favicon = require("serve-favicon");
-var logger = require("morgan");
-var cookieParser = require("cookie-parser");
-var bodyParser = require("body-parser");
-var hbs = require("express-handlebars");
-
-var routes = require("./routes/index");
+const express = require("express"); //Express.js core
+const hbs = require("express-handlebars"); //Express.js Handlebars templating
+const http = require("http"); // default node http library
+const path = require("path"); // default node path library
+const favicon = require("serve-favicon"); //favicon serving
+const logger = require("morgan"); //logger for debugging/development
+const cookieParser = require("cookie-parser"); // Cookies
+const bodyParser = require("body-parser"); //
+const routes = require(path.join(__dirname, "./app/routes/index"));
 
 // Configure the Express application
 
-var app = express();
-var PORT = process.env.PORT;
+const app = express();
+const PORT = process.env.PORT || 9000;
 
 // view engine setup
+app.use("/", routes);
 
 app.engine(
   "hbs",
   hbs({
     extname: "hbs",
     defaultLayout: "layout",
-    layoutsDir: __dirname + "/views/layouts/",
+    layoutsDir: __dirname + "app/views/",
   })
 );
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 
 // Expose the public directory to access CSS files
-app.use(express.static(path.join(__dirname, "./app/public")));
-
+app.use(express.static(path.join(__dirname, "./app/public/css")));
 // Add middleware for parsing incoming request bodies
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
-
-// Add the application routes
-require(path.join(__dirname, "./app/routing/apiRoutes"))(app);
-require(path.join(__dirname, "./app/routing/htmlRoutes"))(app);
-
-// Start listening on PORT
-app.listen(PORT, function() {
-  console.log("Friend Finder app is listening on PORT: " + PORT);
-});
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger("dev"));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "app")));
-
-app.use("/", routes);
+app.use(logger("dev"));
+app.use(favicon(path.join(__dirname, "./app/public", "favicon.ico")));
+// Original Homework Application
+//require(path.join(__dirname, "./app/routing/apiRoutes"))(app);
+//require(path.join(__dirname, "./app/routing/htmlRoutes"))(app);
+//app.use(express.static(path.join(__dirname, "./app/public/css")));
+//app.use(bodyParser.json());
+//app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(bodyParser.text());
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
