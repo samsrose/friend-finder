@@ -1,22 +1,24 @@
+import { listenerCount } from "cluster";
+
 // Pull in required dependencies
 const express = require("express"); //Express.js core
 const hbs = require("express-handlebars"); //Express.js Handlebars templating
 const http = require("http"); // default node http library
 const path = require("path"); // default node path library
-const favicon = require("serve-favicon"); //favicon serving
-const logger = require("morgan"); //logger for debugging/development
 const cookieParser = require("cookie-parser"); // Cookies
 const bodyParser = require("body-parser"); //
-const routes = require(path.join(__dirname, "./app/routes/index"));
-
+const normalizePort = require("normalize-port");
+const port = normalizePort(process.env.PORT || '9000');
+const server = http = http.createServer(listenerOrApp).listen(port, ())
 // Configure the Express application
 
 const app = express();
-const PORT = process.env.PORT || 9000;
 
-// view engine setup
+//set up routes
+const routes = require(path.join(__dirname, "./app/routes/index"));
 app.use("/", routes);
 
+app.set('port', process.env.PORT || 3000);
 app.engine(
   "hbs",
   hbs({
@@ -25,19 +27,21 @@ app.engine(
     layoutsDir: __dirname + "app/views/",
   })
 );
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "hbs");
 
 // Expose the public directory to access CSS files
 app.use(express.static(path.join(__dirname, "./app/public/css")));
 // Add middleware for parsing incoming request bodies
+app.use(express.logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.text());
 app.use(cookieParser());
-app.use(logger("dev"));
-app.use(favicon(path.join(__dirname, "./app/public", "favicon.ico")));
-// Original Homework Application
+// ******
+// * homework routes (aka without express-handlebars)
+// ******
 //require(path.join(__dirname, "./app/routing/apiRoutes"))(app);
 //require(path.join(__dirname, "./app/routing/htmlRoutes"))(app);
 //app.use(express.static(path.join(__dirname, "./app/public/css")));
